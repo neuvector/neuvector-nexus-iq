@@ -1,0 +1,17 @@
+address: 127.0.0.1
+port: 12080
+
+neuvector:
+  endpoint: https://127.0.0.1:10443
+  insecure: true
+  username: admin
+  password: admin
+
+nexusiq:
+  endpoint: http://127.0.0.1:8070
+  insecure: true
+  username: admin
+  password: admin123
+  organization_name: Sandbox Organization
+  source: neuvector
+  app_name_label: com.sonatype.nexus.iq.applicationName

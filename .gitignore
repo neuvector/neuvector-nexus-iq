@@ -1,0 +1,27 @@
+# Executable
+/nv-nx-iq
+
+# Generated code
+
+## CycloneDX models
+
+# /pkg/cyclonedx/cyclonedx-1.1.xsd.go
+# /pkg/cyclonedx/cyclonedx-spdx-1.0.xsd.go
+# /pkg/cyclonedx/cyclonedx-vulnerability-1.0.xsd.go
+
+## NeuVector client
+
+# /neuvector/client
+# /neuvector/models
+
+## NexusIQ client
+
+# /nexusiq/client
+# /nexusiq/models
+
+# License files for test instances
+/test/licenses/*.txt
+/test/licenses/*.lic
+
+# IntelliJ
+.idea

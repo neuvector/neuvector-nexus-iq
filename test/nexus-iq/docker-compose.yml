@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  nexus-iq:
+    image: "sonatype/nexus-iq-server:1.94.0"
+    #container_name: nexus-iq
+    ports:
+      # Web
+      - "8070:8070"
+      # Admin
+      - "8071:8071"
+    volumes:
+    - type: volume
+      source: nexus-data
+      target: /sonatype-work
+    # - type: bind
+    #   source: ./config.yml
+    #   target: /etc/nexus-iq-server/config.yml
+    #   read_only: true
+volumes:
+  nexus-data:
+    name: nv-iq-test-nexus-data
+    external: true

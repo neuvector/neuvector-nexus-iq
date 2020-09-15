@@ -1,0 +1,407 @@
+swagger: "2.0"
+info:
+  title: Nexus Iq API
+  description: Using REST API calls, the IQ Server provides functionality to create and update applications, as well as retrieve values for policy violations.
+  version: 94.0.0
+  contact:
+    email: dominik@lekse.de
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /api/v2
+schemes:
+  - http
+  - https
+externalDocs:
+  description: Nexus IQ REST API documentation
+  url: https://help.sonatype.com/iqserver/automating/rest-apis
+
+tags:
+  - name: Application
+    description: The primary functions of the Application REST APIs are creating, updating, and deleting applications.
+    externalDocs:
+      description: Application REST APIs - v2
+      url: https://help.sonatype.com/iqserver/automating/rest-apis/application-rest-apis---v2
+  - name: ThirdPartyScan
+    description: The Third-Party Scan REST API allows for single, or multiple components, to be scanned against a specific application and associated policies, generating an Application Composition Report.
+    externalDocs:
+      description: Third-Party Scan REST API - v2
+      url: https://help.sonatype.com/iqserver/automating/rest-apis/third-party-scan-rest-api---v2
+  - name: Organization
+    description: The Organization REST API allows you to create new organizations and browse the list of organizations.
+    externalDocs:
+      description: Organization REST APIs - v2
+      url: https://help.sonatype.com/iqserver/automating/rest-apis/organization-rest-apis---v2
+  - name: License
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+
+security:
+  - basicAuth: []
+
+paths:
+  /applications:
+    get:
+      operationId: getApplication
+      tags:
+        - Application
+      summary: Get a single application
+      description: |
+        Get a single application
+      parameters:
+        - name: publicId
+          in: query
+          description: Public ID of the application
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Applications"
+        401:
+          description: Unauthorized
+    post:
+      operationId: createApplication
+      tags:
+        - Application
+      summary: Create an application
+      parameters:
+        - name: application
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/NewApplication"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        # Status code is 200 and not 202
+        200:
+          description: Created
+          schema:
+            $ref: "#/definitions/Application"
+        400:
+          description: BadRequest
+        401:
+          description: Unauthorized
+  /scan/applications/{applicationInternalId}/sources/{source}:
+    post:
+      operationId: postScan
+      tags:
+        - ThirdPartyScan
+      summary: Submit a scan report
+      description: |
+        Submit a scan report
+      parameters:
+        - name: applicationInternalId
+          type: string
+          in: path
+          description: |
+            Internal application ID
+          required: true
+        - name: source
+          type: string
+          in: path
+          description: Source
+          required: true
+        - name: stageId
+          type: string
+          in: query
+          description: |
+            The stageId query param is optional, if not sent build is used by default. Accepted values are develop, build, stage-release, release, and operate.
+          required: false
+        - name: bom
+          in: body
+          description: CycloneDX SBOM XML
+          required: true
+          schema:
+            type: object
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      responses:
+        202:
+          description: Accepted
+          schema:
+            $ref: "#/definitions/ScanStatusReference"
+        401:
+          description: Unauthorized
+  /scan/applications/{applicationInternalId}/status/{statusId}:
+    get:
+      operationId: getScanStatus
+      tags:
+        - ThirdPartyScan
+      summary: Get scan status
+      description: |
+        Get the status of a scan report submit
+      parameters:
+        - name: applicationInternalId
+          type: string
+          in: path
+          description: |
+            Internal application ID
+          required: true
+        - name: statusId
+          type: string
+          in: path
+          description: Status ID
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ScanStatus"
+        401:
+          description: Unauthorized
+
+  /organizations:
+    get:
+      operationId: getOrganizations
+      tags:
+        - Organization
+      summary: Get organizations
+      description: |
+        Get a list of all organizations
+      parameters:
+        - name: organizationName
+          type: string
+          in: query
+          description: |
+            Organization name
+          required: false
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Organizations"
+        401:
+          description: Unauthorized
+  /rest/product/license:
+    get:
+      operationId: getLicense
+      tags:
+        - License
+      summary: Get license
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/License"
+        402:
+          description: PaymentRequired
+    post:
+      operationId: setLicense
+      tags:
+        - License
+      summary: Set license
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          description: License file
+      responses:
+        200:
+          description: OK
+
+definitions:
+  Applications:
+    type: object
+    required:
+      - applications
+    properties:
+      applications:
+        type: array
+        items:
+          $ref: "#/definitions/Application"
+
+  Application:
+    type: object
+    required:
+      - id
+      - publicId
+      - name
+      - organizationId
+    properties:
+      id:
+        type: string
+        example: 4537e6fe68c24dd5ac83efd97d4fc2f4
+      publicId:
+        type: string
+        example: MyApplicationID
+      name:
+        type: string
+        example: MyApplication
+      organizationId:
+        type: string
+        example: bb41817bd3e2403a8a52fe8bcd8fe25a
+      contactUserName:
+        type: string
+        example: NewAppContact
+      applicationTags:
+        type: array
+        items:
+          $ref: "#/definitions/ApplicationTag"
+
+  ApplicationTag:
+    type: object
+    required:
+      - id
+      - tagId
+      - applicationId
+    properties:
+      id:
+        type: string
+        example: 9beee80c6fc148dfa51e8b0359ee4d4e
+      tagId:
+        type: string
+        example: cfea8fa79df64283bd64e5b6b624ba48
+      applicationId:
+        type: string
+        example: 4bb67dcfc86344e3a483832f8c496419
+
+  NewApplication:
+    type: object
+    required:
+      - publicId
+      - name
+      - organizationId
+    properties:
+      publicId:
+        type: string
+        example: MyApplicationID
+      name:
+        type: string
+        example: MyApplication
+      organizationId:
+        type: string
+        example: bb41817bd3e2403a8a52fe8bcd8fe25a
+      contactUserName:
+        type: string
+        example: NewAppContact
+      applicationTags:
+        type: array
+        items:
+          $ref: "#/definitions/ApplicationTag"
+
+  ScanStatusReference:
+    type: object
+    required:
+      - statusUrl
+    properties:
+      statusUrl:
+        type: string
+        example: api/v2/scan/applications/7482e61ee37c42e4a6777ec89a057ace/status/8a3c776e146f4afeb33d5b647d1d9368
+
+  ScanStatus:
+    type: object
+    required:
+      - policyAction
+      - reportHtmlUrl
+      - isError
+      - componentsAffected
+      - openPolicyViolations
+    properties:
+      policyAction:
+        type: string
+        example: None
+      reportHtmlUrl:
+        type: string
+        example: http://localhost:8070/ui/links/application/my-app/report/95c4c14e
+      isError:
+        type: boolean
+        example: false
+      componentsAffected:
+        $ref: "#/definitions/Violations"
+      openPolicyViolations:
+        $ref: "#/definitions/Violations"
+      grandfatheredPolicyViolations:
+        type: integer
+        example: 0
+
+  Violations:
+    type: object
+    required:
+      - critical
+      - severe
+      - moderate
+    properties:
+      critical:
+        type: integer
+        example: 0
+      severe:
+        type: integer
+        example: 0
+      moderate:
+        type: integer
+        example: 0
+
+  Organizations:
+    type: object
+    required:
+      - organizations
+    properties:
+      organizations:
+        type: array
+        items:
+          $ref: "#/definitions/Organization"
+
+  Organization:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+        example: 36d7e629462a4038b581488c347959bc
+      name:
+        type: string
+        example: My Organization
+
+  License:
+    type: object
+    properties:
+      productEdition:
+        type: string
+        example: Lifecycle
+      fingerprint:
+        type: string
+        example: a455f334720baf77cea6794dc59fb7b933fc5be9
+      expiryTimestamp:
+        type: integer
+        example: 1598918400000
+      licensedUsersToDisplay:
+        type: integer
+        example: 1
+      applicationLimitToDisplay:
+        type: integer
+        example: 1
+      firewallUsersToDisplay:
+        type: integer
+        example: 1
+      contactName:
+        type: string
+        example: Curtis Yanko
+      contactCompany:
+        type: string
+        example: Test Sonatype Inc.
+      contactEmail:
+        type: string
+        example: Test Sonatype Inc.
+      products:
+        type: array
+        items:
+          type: string
+        example: ["Nexus Lifecycle","Nexus Firewall"]

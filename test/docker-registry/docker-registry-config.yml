@@ -1,0 +1,18 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+  delete:
+    enabled: true
+http:
+  addr: 0.0.0.0:5000
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3

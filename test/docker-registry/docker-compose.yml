@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  registry:
+    image: "registry:2.7.1"
+    ports:
+      # HTTP
+      - "5000:5000"
+    volumes:
+    - type: volume
+      source: registry-data
+      target: /var/lib/registry
+    - type: bind
+      source: ./docker-registry-config.yml
+      target: /etc/docker/registry/config.yml
+      read_only: true
+volumes:
+  registry-data:
+    name: nv-iq-test-registry-data
+    external: true

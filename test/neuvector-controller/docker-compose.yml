@@ -1,0 +1,52 @@
+version: "3.8"
+services:
+  neuvector:
+    pid: host
+    # https://hub.docker.com/repository/docker/neuvector/allinone/tags?page=1
+    image: neuvector/allinone:3.2.2.b5
+    #container_name: neuvector
+    privileged: true
+    environment:
+      - CLUSTER_JOIN_ADDR=neuvector
+      # - HTTP_PROXY=
+      # - HTTPS_PROXY=
+    ports:
+      - 18300:18300
+      - 18301:18301
+      - 18400:18400
+      - 18401:18401
+      - 18301:18301/udp
+      # Web UI
+      - 8443:8443
+      # REST API
+      - 10443:10443
+    volumes:
+      #- /lib/modules:/lib/modules:ro
+      - type: bind
+        source: /lib/modules
+        target: /lib/modules
+        read_only: true
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      # - /proc:/host/proc:ro
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      # - /sys/fs/cgroup:/host/cgroup:ro
+      - type: bind
+        source: /sys/fs/cgroup
+        target: /host/cgroup
+        read_only: true
+      # - neuvector-data:/var/neuvector
+      - type: volume
+        source: neuvector-data
+        target: /var/neuvector
+  
+volumes:
+  neuvector-data:
+    name: nv-iq-test-neuvector-data
+    external: true
