@@ -95,5 +95,5 @@ e2e-test: licenses
 
 .PHONY: image
 image:
-	echo "$@ target is not implemented"
+	DOCKER_BUILDKIT=1 docker build -t nv-nx-iq:latest .
 

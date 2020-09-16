@@ -43,7 +43,7 @@ RUN --mount=type=cache,id=nv-nx-iq-go-pkg,target=/go/pkg go mod download
 COPY . /app
 
 # ## Build executable
-RUN --mount=type=cache,id=nv-nx-iq-go-pkg,target=/go/pkg CGO_ENABLED=0 go build
+RUN --mount=type=cache,id=nv-nx-iq-go-pkg,target=/go/pkg CGO_ENABLED=0 go build -o /app/nv-nx-iq
 
 # # Test
 FROM build as test
