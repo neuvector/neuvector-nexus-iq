@@ -4,6 +4,8 @@ The NeuVector Nexus IQ integration reports vulnerabilities detected by NeuVector
 
 For further project and research documentation refer to the contents of the sub folder `./docs`.
 
+- [Guide: Setup integration between NeuVector and Nexus IQ](./docs/setup-guide.md)
+
 ## Features
 
 - Listen to HTTP web hook calls triggered by registry scan events (`Registry.Scan.Report`) and runtime scan events (`Container.Scan.Report`) by the NeuVector controller
