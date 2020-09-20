@@ -1,3 +1,3 @@
 package cyclonedx
 
-//go:generate go run ./../scripts/gen_cyclonedx_models.go
+//go:generate go run ./../scripts/gen-cyclonedx-models/main.go

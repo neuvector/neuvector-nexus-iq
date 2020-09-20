@@ -1,3 +1,3 @@
 package neuvector
 
-//go:generate go run ./../scripts/gen_neuvector_client.go
+//go:generate go run ./../scripts/gen-neuvector-client/main.go
