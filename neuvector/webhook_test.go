@@ -8,7 +8,7 @@ import (
 
 const (
 	registryScanReportWebhookBody = `{
-  "text": "*Audit: CRITICAL level*\n_Registry.Scan.Report: high 30 medium 34_\n>>> notification=audit,name=Registry.Scan.Report,level=Critical,reported_timestamp=1593010960,reported_at=2020-06-24T15:02:40Z,cluster_name=cluster.local,response_rule_id=7,host_id=,host_name=,enforcer_id=,enforcer_name=,image_id=a3590c0e9ff9eca5b4863e13b4271435476104701740b3f7470dffdd481b0a60,registry=https://registry.hub.docker.com/,repository=library/debian,tag=jessie-20200607,base_os=debian:8,high_vul_cnt=30,medium_vul_cnt=34,high_vuls=[CVE-2017-16997 CVE-2014-9761 CVE-2017-1000408 CVE-2018-1000001 CVE-2018-6485 CVE-2019-9169 CVE-2017-1000408 CVE-2019-9169 CVE-2017-16997 CVE-2018-6485 CVE-2014-9761 CVE-2018-1000001 CVE-2019-9169 CVE-2017-16997 CVE-2017-1000408 CVE-2014-9761 CVE-2018-1000001 CVE-2018-6485 CVE-2020-10543 CVE-2018-6797 CVE-2020-10878 CVE-2017-12424 CVE-2017-12424 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779],medium_vuls=[CVE-2018-12886 CVE-2015-5276 CVE-2018-12886 CVE-2018-12886 CVE-2015-5276 CVE-2015-5276 CVE-2018-12886 CVE-2016-10739 CVE-2017-12132 CVE-2017-1000409 CVE-2020-1751 CVE-2017-12133 CVE-2016-10739 CVE-2017-12132 CVE-2017-12133 CVE-2020-1751 CVE-2017-1000409 CVE-2017-12133 CVE-2020-1751 CVE-2017-1000409 CVE-2016-10739 CVE-2017-12132 CVE-2017-10790 CVE-2017-7244 CVE-2015-3217 CVE-2017-7186 CVE-2020-12723 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011],cvedb_version=1.924,message=,user=,error=,aggregation_from=0,count=0,platform=,platform_version=",
+  "text": "*Audit: CRITICAL level*\n_Registry.Scan.Report: high 30 medium 34_\n>>> notification=audit,name=Registry.Scan.Report,level=Critical,reported_timestamp=1593010960,reported_at=2020-06-24T15:02:40Z,cluster_name=cluster.local,response_rule_id=7,host_id=,host_name=,enforcer_id=,enforcer_name=,image_id=a3590c0e9ff9eca5b4863e13b4271435476104701740b3f7470dffdd481b0a60,registry_name=Dockerhub,registry=https://registry.hub.docker.com/,repository=library/debian,tag=jessie-20200607,base_os=debian:8,high_vul_cnt=30,medium_vul_cnt=34,high_vuls=[CVE-2017-16997 CVE-2014-9761 CVE-2017-1000408 CVE-2018-1000001 CVE-2018-6485 CVE-2019-9169 CVE-2017-1000408 CVE-2019-9169 CVE-2017-16997 CVE-2018-6485 CVE-2014-9761 CVE-2018-1000001 CVE-2019-9169 CVE-2017-16997 CVE-2017-1000408 CVE-2014-9761 CVE-2018-1000001 CVE-2018-6485 CVE-2020-10543 CVE-2018-6797 CVE-2020-10878 CVE-2017-12424 CVE-2017-12424 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779 CVE-2016-2779],medium_vuls=[CVE-2018-12886 CVE-2015-5276 CVE-2018-12886 CVE-2018-12886 CVE-2015-5276 CVE-2015-5276 CVE-2018-12886 CVE-2016-10739 CVE-2017-12132 CVE-2017-1000409 CVE-2020-1751 CVE-2017-12133 CVE-2016-10739 CVE-2017-12132 CVE-2017-12133 CVE-2020-1751 CVE-2017-1000409 CVE-2017-12133 CVE-2020-1751 CVE-2017-1000409 CVE-2016-10739 CVE-2017-12132 CVE-2017-10790 CVE-2017-7244 CVE-2015-3217 CVE-2017-7186 CVE-2020-12723 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011 CVE-2016-5011],cvedb_version=1.924,message=,user=,error=,aggregation_from=0,count=0,platform=,platform_version=",
   "username": "NeuVector - cluster.local"
 }`
 
@@ -50,7 +50,7 @@ func TestWebhookRequest_ToWebhookData(t *testing.T) {
 	assert.Equal(t, "Registry.Scan.Report", wd.Event)
 	assert.Equal(t, "Critical", wd.Level)
 
-	assert.Len(t, wd.Values, 28)
+	assert.Len(t, wd.Values, 29)
 	assert.Contains(t, wd.Values, "name")
 	assert.Contains(t, wd.Values, "level")
 	assert.Contains(t, wd.Values, "image_id")
@@ -73,8 +73,11 @@ func TestWebhookData_ToWebhookRegistryScanReportData(t *testing.T) {
 	}
 
 	expRsrd := &WebhookRegistryScanReportData{
-		Registry: "https://registry.hub.docker.com/",
-		ImageId:  "a3590c0e9ff9eca5b4863e13b4271435476104701740b3f7470dffdd481b0a60",
+		Registry:     "https://registry.hub.docker.com/",
+		RegistryName: "Dockerhub",
+		ImageId:      "a3590c0e9ff9eca5b4863e13b4271435476104701740b3f7470dffdd481b0a60",
+		Repository:   "library/debian",
+		Tag:          "jessie-20200607",
 	}
 
 	assert.EqualValues(t, expRsrd, rsrd)
