@@ -58,6 +58,27 @@ make test
 ```
 
 `nv-nx-iq` can optionally be configured using a YAML configuration file referenced in the `--config` argument. An example YAML configuration file is available at `./test/config/example.yaml`.
+## Configuration
+
+The integration can be configured via command line arguments, environment variables or via a YAML configuration file. The `--config` argument can reference a configuration file. An example YAML configuration file is available at `./test/config/example.yaml`.
+
+The following table provides an overview of available configuration parameters.
+
+Key | Argument | Environment variable | Description | Default | Example
+--- | --- | --- | --- | --- | ---
+`address` | `--address` | `NV_NX_ADDRESS` | Address of the webhook server | `127.0.0.1` | 
+`port` | `--port` | `NV_NX_PORT` | Port of the webhook server | `5080` | 
+`neuvector.endpoint` | `--nv-endpoint` | `NV_NX_NEUVECTOR_ENDPOINT` | Endpoint of the NeuVector Controller REST API |  | `https://127.0.0.1:10443`
+`neuvector.username` | `--nv-username` | `NV_NX_NEUVECTOR_USERNAME` | Username of the NeuVector Controller | | `admin`
+`neuvector.password` | `--nv-password` | `NV_NX_NEUVECTOR_PASSWORD` | Password of the NeuVector Controller | | `admin`
+`neuvector.insecure` | `--nv-insecure` | `NV_NX_NEUVECTOR_INSECURE` | If set, TLS certificate verification is skipped for the NeuVector controller. This should be used in testing scenarios only. | `false` | 
+`nexusiq.endpoint` | `--nx-endpoint` | `NV_NX_NEXUSIQ_ENDPOINT` | Endpoint of the Nexus IQ REST API | | `http://127.0.0.1:8070`
+`nexusiq.username` | `--nx-username` | `NV_NX_NEXUSIQ_USERNAME` | Username of Nexus IQ | | `admin`
+`nexusiq.password` | `--nx-password` | `NV_NX_NEXUSIQ_PASSWORD` | Password of Nexus IQ | | `admin123`
+`nexusiq.insecure` | `--nx-insecure` | `NV_NX_NEXUSIQ_INSECURE` | If set, TLS certificate verification is skipped for NexusIQ. This should be used for testing scenarios only. | `false` | 
+`nexusiq.source` | `--nx-source` | `NV_NX_NEXUSIQ_SOURCE` | Source of vulnerabilities in Nexus IQ report | `NeuVector` | 
+`nexusiq.organization_name` | `--nx-org` | `NV_NX_NEXUSIQ_ORGANIZATION_NAME` | Name of the Nexus IQ organization to which vulnerabilities are reported |  | `Sandbox Organization`
+`nexusiq.app_name_label` | `--nx-app-name-label` | `NV_NX_NEXUSIQ_APP_NAME_LABEL` | Key of the label from which the name of the Nexus IQ application is inferred. If not provided, the application name will be derived from the name of the image. | `"com.sonatype.nexus.iq.applicationName` | 
 
 ## Integration tests
 

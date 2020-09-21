@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"bytes"
 	"github.com/neuvector/neuvector-nexus-iq/integration"
 	"github.com/neuvector/neuvector-nexus-iq/internal/logger"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
+	"strings"
 )
 
 var (
@@ -16,23 +19,35 @@ var v = viper.New()
 func initConfig() {
 	v.SetConfigType("yaml")
 
+	// Load default configuration
+	// Viper needs to know the configuration keys in order to load configuration from environment variables
+	b, err := yaml.Marshal(integration.DefaultConfig)
+	if err != nil {
+		logger.Fatalf("unable to load default config: %v", err)
+	}
+
+	defaultConfig := bytes.NewReader(b)
+	if err := v.MergeConfig(defaultConfig); err != nil {
+		logger.Fatalf("unable to load default config: %v", err)
+	}
+
+	// Load configuration from environment variables
+	// For example: NV_NX_ADDRESS, NV_NX_PORT, NV_NX_NEUVECTOR_USERNAME, NV_NX_NEUVECTOR_PASSWORD
+	v.AutomaticEnv()
+	v.SetEnvPrefix("NV_NX")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
 	if configFile != "" {
 		// Explicitly set config file path
 		v.SetConfigFile(configFile)
 	} else {
-		// Implicitly Search config in current directory
+		// Implicitly search config in current directory
 		v.AddConfigPath(".")
 		v.SetConfigName("config")
 	}
 
-	// Load configurations from environment variables
-	// For example: NV_NX_ADDRESS, NV_NX_PORT
-	// Environment variables are bound in arguments.go
-	v.SetEnvPrefix("nv_nx")
-	v.AutomaticEnv()
-
 	// Read from config file
-	err := v.ReadInConfig()
+	err = v.MergeInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
@@ -51,6 +66,6 @@ func initConfig() {
 	// https://github.com/spf13/viper#unmarshaling
 	err = v.Unmarshal(&rootConfig)
 	if err != nil {
-		logger.Fatalf("unable to parse config file: %v", err)
+		logger.Fatalf("unable to load config: %v", err)
 	}
 }

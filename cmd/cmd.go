@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	// Initialize Cobra
+	// Initialize Viper
 	cobra.OnInitialize(initConfig)
 }
 
