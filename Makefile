@@ -2,7 +2,21 @@ PROJECT_PATH := $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 GO_MODULE := github.com/neuvector/neuvector-nexus-iq
 
-CMD_EXECUTABLE_NAME := nv-nx-iq
+CLI_EXECUTABLE_NAME := nv-nx-iq
+
+# Image
+
+IMAGE_NAME := neuvector/neuvector-nexus-iq
+
+IMAGE_TAG := latest
+
+# Build variables
+
+BUILD_VERSION = $(shell git describe --tags --always)
+
+BUILD_COMMIT = $(shell git rev-parse HEAD)
+
+BUILD_TIME = $(shell date -u)
 
 # # CycloneDX schema
 
@@ -46,6 +60,8 @@ test/e2e/docker-registry-config.yml: \
 	test/docker-registry/docker-registry-config.yml
 	cp $< $@ 
 
+# e2e-infrastructure
+
 .PHONY: e2e-infrastructure-start
 e2e-infrastructure-start: \
 	test/e2e/docker-compose.yml \
@@ -60,10 +76,10 @@ e2e-infrastructure-stop:
 e2e-infrastructure-status:
 	cd test/e2e && docker-compose ps
 
-# # Cmd executable
+# # CLI executable
 
-$(CMD_EXECUTABLE_NAME): .FORCE
-	go build -o $@ .
+$(CLI_EXECUTABLE_NAME): .FORCE
+	go build -o $@ -ldflags="-X '$(GO_MODULE)/build.Version=$(BUILD_VERSION)' -X '$(GO_MODULE)/build.Commit=$(BUILD_COMMIT)' -X '$(GO_MODULE)/build.Time=$(BUILD_TIME)'" .
 	chmod +x $@
 
 # # Short targets
@@ -79,7 +95,7 @@ fmt:
 	go fmt ./...
 
 .PHONY: build
-build: $(CMD_EXECUTABLE_NAME)
+build: $(CLI_EXECUTABLE_NAME)
 
 # Execute unit tests
 .PHONY: test
@@ -87,13 +103,21 @@ test:
 	go test -v ./...
 
 # Execute integration tests
-# -count=1 to disable test result cache
-# -v verbose output
+# `-count=1`: Disable test result cache
+# `-v`: Verbose output
 .PHONY: e2e-test
 e2e-test: licenses
-	go test -v -count 1 -tags e2e$(if $(TEST), -run $(TEST),) $(GO_MODULE)/e2e
+	go test -v -count 1 -tags e2e$(if $(TEST), -run $(TEST),) ./e2e
 
 .PHONY: image
 image:
-	DOCKER_BUILDKIT=1 docker build -t nv-nx-iq:latest .
+	DOCKER_BUILDKIT=1 docker build \
+	--build-arg 'BUILD_VERSION=$(BUILD_VERSION)' \
+	--build-arg 'BUILD_COMMIT=$(BUILD_COMMIT)' \
+	--build-arg 'BUILD_TIME=$(BUILD_TIME)' \
+	-t $(IMAGE_NAME):$(IMAGE_TAG) \
+	.
 
+.PHONY: container-version
+container-version:
+	docker run --rm $(IMAGE_NAME):$(IMAGE_TAG) version
