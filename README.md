@@ -1,5 +1,7 @@
 # NeuVector Nexus IQ integration
 
+![Build](https://github.com/neuvector/neuvector-nexus-iq/workflows/Build/badge.svg)
+
 The NeuVector Nexus IQ integration reports vulnerabilities detected by NeuVector to Sonatype Nexus IQ for reporting and analysis purposes.
 
 For further project and research documentation refer to the contents of the sub folder `./docs`.
@@ -17,13 +19,28 @@ For further project and research documentation refer to the contents of the sub 
 - Create a Nexus IQ application if an application cannot be inferred from image meta data
 - Transmit the results to Nexus IQ via the Third-Party Scan REST API
 
+## Requirements
+
+The integration has been tested with the following versions:
+
+- NeuVector Controller `>= 3.2.4`
+- Nexus IQ `>= Release 94`
+
+For versions not meeting these requirements, the function of the integration cannot be guaranteed.
+
+## Docker image
+
+Releases are available as Docker images [via DockerHub](https://hub.docker.com/r/neuvector/neuvector-nexus-iq). Images are tagged correspond to release versions.
+
+```bash
+# Latest release
+docker pull neuvector/neuvector-nexus-iq:latest
+
+# Specific release
+docker pull neuvector/neuvector-nexus-iq:v1.0.0
+```
+
 ## Build
-
-Generate client and schema code
-
-```
-make generate
-```
 
 Build the executable
 
@@ -37,7 +54,17 @@ Execute unit tests
 make test
 ```
 
+## Development
+
+Generate client and schema code
+
+```
+make generate
+```
+
 ## Usage
+
+### Native executable
 
 ```
 ./nv-nx-iq --help
@@ -57,7 +84,28 @@ make test
     --nx-password admin123
 ```
 
-`nv-nx-iq` can optionally be configured using a YAML configuration file referenced in the `--config` argument. An example YAML configuration file is available at `./test/config/example.yaml`.
+For details on the configuration arguments, refer to the dedicated section on configuration below.
+
+### Docker image
+
+```
+docker run --rm neuvector/neuvector-nexus-iq:latest --help
+docker run --rm neuvector/neuvector-nexus-iq:latest serve --help
+```
+
+```
+docker run --rm neuvector/neuvector-nexus-iq:latest serve \
+    --address 0.0.0.0 \
+    --port 5080 \
+    --nv-endpoint "https://127.0.0.1:10443" \
+    --nv-username admin \
+    --nv-password admin \
+    --nx-endpoint "http://127.0.0.1:8070" \
+    --nx-org "Sandbox Organization" \
+    --nx-username admin \
+    --nx-password admin123
+```
+
 ## Configuration
 
 The integration can be configured via command line arguments, environment variables or via a YAML configuration file. The `--config` argument can reference a configuration file. An example YAML configuration file is available at `./test/config/example.yaml`.
@@ -103,7 +151,7 @@ After starting the integration test infrastructure:
 
 - the NeuVector Controller UI is available at https://127.0.0.1:8443 with username `admin` and password `admin`
 - the NeuVector Controller REST API is available at https://127.0.0.1:10443 with username `admin` and password `admin`
-- the Nexus IQ UI is available at https://127.0.0.1:8070 with username `admin` and password `admin123`
+- the Nexus IQ UI is available at http://127.0.0.1:8070 with username `admin` and password `admin123`
 - a private Docker registry at http://127.0.0.1:5000 without authentication
 
 Manual tasks after the first time starting the test infrastructure on a machine. These tasks are currently not automated as part of the integration tests.
