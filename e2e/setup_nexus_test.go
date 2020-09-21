@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"os"
 	"sync"
 	"testing"
 
@@ -76,20 +75,23 @@ func setupNexusIqWithConfig(config integration.RootConfig) error {
 	if hasLicense {
 		log.Println("Nexus Iq license is applied")
 	} else {
-		log.Printf("Apply Nexus Iq license from file %s\n", nexusIqLicensePath)
+		log.Fatalf("CONFIGURATION REQUIRED: Nexus Iq instance has no license applied")
 
-		licenseReader, err := os.Open(nexusIqLicensePath)
-		if err != nil {
-			return err
-		}
-		defer licenseReader.Close()
-		// TODO fix error 406 not acceptable when configuring the Nexus IQ license
-		_, err = c.Root.License.SetLicense((&license.SetLicenseParams{
-			File: licenseReader,
-		}).WithTimeout(c.Timeout), c.BasicAuth())
-		if err != nil {
-			return err
-		}
+		// TODO fix error 406 not acceptable in SetLicense to set the Nexus IQ license
+		//log.Printf("Apply Nexus Iq license from file %s\n", nexusIqLicensePath)
+		//
+		//licenseReader, err := os.Open(nexusIqLicensePath)
+		//if err != nil {
+		//	return err
+		//}
+		//defer licenseReader.Close()
+
+		//_, err = c.Root.License.SetLicense((&license.SetLicenseParams{
+		//	File: licenseReader,
+		//}).WithTimeout(c.Timeout), c.BasicAuth())
+		//if err != nil {
+		//	return err
+		//}
 	}
 
 	return nil
