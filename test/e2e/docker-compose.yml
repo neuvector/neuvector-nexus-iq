@@ -3,73 +3,73 @@ services:
   neuvector:
     pid: host
     # https://hub.docker.com/repository/docker/neuvector/allinone/tags?page=1
-    image: neuvector/allinone:3.2.2.b5
+    image: neuvector/allinone:3.2.4
+    # image: neuvector/allinone:4.0.0.b2
     #container_name: neuvector
     privileged: true
     environment:
-    - CLUSTER_JOIN_ADDR=neuvector
-    # - HTTP_PROXY=
-    # - HTTPS_PROXY=
-
+      - CLUSTER_JOIN_ADDR=neuvector
+      # - HTTP_PROXY=
+      # - HTTPS_PROXY=
     ports:
-    - 18300:18300
-    - 18301:18301
-    - 18400:18400
-    - 18401:18401
-    - 18301:18301/udp
-    # Web UI
-    - 8443:8443
-    # REST API
-    - 10443:10443
+      - 18300:18300
+      - 18301:18301
+      - 18400:18400
+      - 18401:18401
+      - 18301:18301/udp
+      # Web UI
+      - 8443:8443
+      # REST API
+      - 10443:10443
     volumes:
-    - #- /lib/modules:/lib/modules:ro
-      type: bind
-      source: /lib/modules
-      target: /lib/modules
-      read_only: true
-    - # - /var/run/docker.sock:/var/run/docker.sock:ro
-      type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
-    - # - /proc:/host/proc:ro
-      type: bind
-      source: /proc
-      target: /host/proc
-      read_only: true
-    - # - /sys/fs/cgroup:/host/cgroup:ro
-      type: bind
-      source: /sys/fs/cgroup
-      target: /host/cgroup
-      read_only: true
-    - # - neuvector-data:/var/neuvector
-      type: volume
-      source: neuvector-data
-      target: /var/neuvector
+      #- /lib/modules:/lib/modules:ro
+      - type: bind
+        source: /lib/modules
+        target: /lib/modules
+        read_only: true
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      # - /proc:/host/proc:ro
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      # - /sys/fs/cgroup:/host/cgroup:ro
+      - type: bind
+        source: /sys/fs/cgroup
+        target: /host/cgroup
+        read_only: true
+      # - neuvector-data:/var/neuvector
+      - type: volume
+        source: neuvector-data
+        target: /var/neuvector
   nexus-iq:
     image: "sonatype/nexus-iq-server:1.94.0"
     ports:
-    # Web
-    - "8070:8070"
-    # Admin
-    - "8071:8071"
+      # Web
+      - "8070:8070"
+      # Admin
+      - "8071:8071"
     volumes:
-    - type: volume
-      source: nexus-data
-      target: /sonatype-work
+      - type: volume
+        source: nexus-data
+        target: /sonatype-work
   registry:
     image: "registry:2.7.1"
     ports:
-    # HTTP
-    - "5000:5000"
+      # HTTP
+      - "5000:5000"
     volumes:
-    - type: volume
-      source: registry-data
-      target: /var/lib/registry
-    - type: bind
-      source: ./docker-registry-config.yml
-      target: /etc/docker/registry/config.yml
-      read_only: true
+      - type: volume
+        source: registry-data
+        target: /var/lib/registry
+      - type: bind
+        source: ./docker-registry-config.yml
+        target: /etc/docker/registry/config.yml
+        read_only: true
 volumes:
   neuvector-data:
     name: nv-iq-test-neuvector-data

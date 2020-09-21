@@ -3,7 +3,8 @@ services:
   neuvector:
     pid: host
     # https://hub.docker.com/repository/docker/neuvector/allinone/tags?page=1
-    image: neuvector/allinone:3.2.2.b5
+    image: neuvector/allinone:3.2.4
+    # image: neuvector/allinone:4.0.0.b2
     #container_name: neuvector
     privileged: true
     environment:
